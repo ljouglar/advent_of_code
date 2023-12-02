@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 
-let result = 0;
+const filename = 'aoc_02/aoc_02.data';
 
 type Set = {
   red?: number;
@@ -8,10 +8,28 @@ type Set = {
   blue?: number;
 };
 
+type Game = {
+  sets: Array<Set>;
+};
+
 const getSetFromString = (accSet: Set, curStrSet: string): Set => ({
   ...accSet,
   [curStrSet.split(' ')[1]]: +curStrSet.split(' ')[0],
 });
+
+const getSetListFromLine = (line: string): Array<string> => line.split(': ')[1].split('; ');
+
+const getSetListFromStr = (strSetList: string): Set => strSetList.split(', ').reduce(getSetFromString, {} as Set);
+
+const extractGames = (): Array<Game> =>
+  readFileSync(filename, 'utf-8')
+    .split('\n')
+    .map(
+      (line: string) =>
+        ({
+          sets: getSetListFromLine(line).map(getSetListFromStr),
+        } as Game),
+    );
 
 const zeroSet: Set = { red: 0, green: 0, blue: 0 };
 
@@ -25,13 +43,9 @@ const getMinSet = (accSet: Set, curSet: Set): Set => {
 
 const setPower = (set: Set): number => (set?.red || 0) * (set?.green || 0) * (set?.blue || 0);
 
-const lines: Array<string> = readFileSync('aoc_02/aoc_02.data', 'utf-8').split('\n');
-for (const line of lines) {
-  console.log(line);
-  const sets: Array<Set> = line
-    .split(': ')[1]
-    .split('; ')
-    .map((stringSet: string) => stringSet.split(', ').reduce(getSetFromString, {} as Set));
-  result += setPower(sets.reduce(getMinSet, zeroSet));
-  console.log(`result ${result}`);
-}
+const result = extractGames().reduce(
+  (sum: number, curGame: Game) => sum + setPower(curGame.sets.reduce(getMinSet, zeroSet)),
+  0,
+);
+
+console.log(`result ${result}`);

@@ -1,13 +1,16 @@
-import { readFileSync} from 'fs';
+import { readFileSync } from 'fs';
 
-let result = 0;
-const lines: Array<string> = readFileSync('aoc_01/aoc_0101.data', 'utf-8').split('\n');
-for (const line of lines) {
-    const reversedLine = line.split('').reverse().join('');
-    
-    const first = line.match(/\d/)[0];
-    const last = reversedLine.match(/\d/)[0];
+const filename = 'aoc_01/aoc_0101.data';
 
-    result += +`${first}${last}`
-    console.log(`${first} - ${last} - ${result} - ${line}`);
-}
+const extractLines = (): Array<string> => readFileSync(filename, 'utf-8').split('\n');
+
+const getFirstAndLastConcatNumber = (line: string): number => {
+  const { 0: first, length, [length - 1]: last } = line.match(/\d/g);
+  return +`${first}${last}`;
+};
+
+const result = extractLines()
+  .map(getFirstAndLastConcatNumber)
+  .reduce((sum: number, curNumber: number): number => sum + curNumber);
+
+console.log(`result ${result}`);

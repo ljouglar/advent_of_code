@@ -60,7 +60,7 @@ const analysedLines = extractLines().map(mapLineToAnalized);
 
 const gears = {};
 let lastAnalyzedLine = null;
-for (const { index, analysedLine } of analysedLines.map((analysedLine, index) => ({ index, analysedLine }))) {
+for (const analysedLine of analysedLines) {
   for (const gear of analysedLine.gears) {
     const gearKey = `${gear.line}_${gear.pos}`;
     if (!gears[gearKey]) {

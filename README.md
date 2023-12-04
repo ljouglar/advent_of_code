@@ -1,4 +1,4 @@
-# advent_of_code_2023
+# Advent of code 2023
 
 Ma participation au calendrier de l'avent du code 2023.
 

@@ -42,7 +42,7 @@ const result: number = seedRanges.reduce((min: number, range: Array<number>) => 
   console.log(range);
   for (let i: number = range[0]; i < range[0] + range[1]; i++){
     const value = toValue(i);
-    min = Math.min(min, i);
+    min = Math.min(min, value);
   }
   return min;
 }, Number.MAX_VALUE);

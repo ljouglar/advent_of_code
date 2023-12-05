@@ -6,10 +6,11 @@ type Move = {
   dst: number;
 };
 
-const filename = '2022_aoc_05/aoc_0501.data';
+const filename = '2022_aoc_05/aoc_05.data';
 
 const extractLines = (): Array<string> => readFileSync(filename, 'utf-8').split('\n');
 
+// Build cargo representation and moves table
 let phase = 0;
 const rawCrates: Array<Array<string>> = [];
 const moves: Array<Move> = [];
@@ -27,23 +28,26 @@ for (const line of extractLines()) {
   }
 }
 
-let col = 0;
+// Rotate the cargo representation to handle columns of crates
 const crates: Array<Array<string>> = [];
 for (const crateRow of rawCrates.reverse()) {
-  crates[col] = [];
+  let col = 0;
   for (const crate of crateRow) {
-    crates[col].push(crate)
+    crates[col] ||= [];
+    if (crate) {
+      crates[col].push(crate);
+    }
+    col++;
   }
-  col++;
 }
 
-const applyMove = (crates: Array<Array<string>>, move: Move): Array<Array<string>> => {
-  for (let i: number = 0; i < move.qty; i++){
-
+// Evaluate the moves table on the cargo representation
+for (const move of moves) {
+  for (let i: number = 0; i < move.qty; i++) {
+    crates[move.dst - 1].push(crates[move.src - 1].pop());
   }
-  return crates;
 }
 
-const result = crates;
+const result = crates.map((crateRow) => crateRow.pop());
 
-console.log(`result ${result}`);
+console.log(`result ${result.join('')}`);

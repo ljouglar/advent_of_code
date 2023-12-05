@@ -12,10 +12,11 @@ const filename = 'aoc_05/aoc_05.data';
 
 const extractLines = (): Array<string> => readFileSync(filename, 'utf-8').split('\n');
 
-const seeds: Array<number> = extractLines()[0]
-  .split(/: +/)[1]
-  .split(/ +/)
-  .map((seed) => +seed);
+const seedRanges: Array<Array<number>> = Array.from(
+  extractLines()[0]
+    .split(/: +/)[1]
+    .matchAll(/\d+ +\d+/g),
+).map((match: RegExpMatchArray) => match[0]).map((range: string) => range.split(/ +/).map((e: string): number => +e));
 
 const maps: Array<Map> = [];
 for (const line of extractLines().slice(2)) {
@@ -37,6 +38,14 @@ const getValue = (resource: number, map: Map): number => {
 
 const toValue = (seed: number): number => maps.reduce((value: number, curMap: Map) => getValue(value, curMap), seed);
 
-const result = Math.min(...seeds.map(toValue));
+const result: number = seedRanges.reduce((min: number, range: Array<number>) => {
+  console.log(range);
+  for (let i: number = range[0]; i < range[0] + range[1]; i++){
+    const value = toValue(i);
+    min = Math.min(min, i);
+  }
+  return min;
+}, Number.MAX_VALUE);
+
 
 console.log(`result ${result}`);

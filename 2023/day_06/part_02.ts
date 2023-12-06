@@ -10,10 +10,7 @@ const filename = '2023/day_06/input.ex.data';
 const extractLines = (): Array<string> => readFileSync(filename, 'utf-8').split('\n');
 
 const data: Array<Array<string>> = extractLines().map(
-  (line: string): Array<string> =>
-    line
-      .split(/: +/)[1]
-      .split(/ +/),
+  (line: string): Array<string> => line.split(/: +/)[1].split(/ +/),
 );
 
 const race: Race = {
@@ -21,18 +18,25 @@ const race: Race = {
   distance: +data[1].join(''),
 };
 
-const getDistanceForHoldDuration = (holdDuration: number, duration: number): number =>
-  (duration - holdDuration) * holdDuration;
-
-const getNbSolution = (race: Race): number =>
-  Array.from(Array(race.duration).keys()).reduce((holdDurations: Array<number>, curHoldDuration: number) => {
-    if (getDistanceForHoldDuration(curHoldDuration, race.duration) > race.distance) {
-      return [...holdDurations, curHoldDuration];
-    } else {
-      return holdDurations;
+const getFirstAndLastSolution = (race: Race): Array<number> => {
+  const result = [];
+  for (let curHoldDuration = 1; curHoldDuration < race.duration; curHoldDuration++){
+    if ((race.duration - curHoldDuration) * curHoldDuration > race.distance) {
+      result[0] = curHoldDuration;
+      break;
     }
-  }, []).length;
+  }
+  for (let curHoldDuration = race.duration - 1; curHoldDuration > 0; curHoldDuration--){
+    if ((race.duration - curHoldDuration) * curHoldDuration > race.distance) {
+      result[1] = curHoldDuration;
+      break;
+    }
+  }
+  return result;
+}
 
-const result = getNbSolution(race);
+const [firstSolution, lastSolution] = getFirstAndLastSolution(race);
+
+const result = lastSolution - firstSolution + 1;
 
 console.log(`result ${result}`);

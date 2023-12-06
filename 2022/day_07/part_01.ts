@@ -7,7 +7,7 @@ type TreeNode = {
   size: number;
   parent: TreeNode | null;
 };
-const filename = '2022/day_07/input.ex.data';
+const filename = '2022/day_07/input.data';
 
 const extractLines = (): Array<string> => readFileSync(filename, 'utf-8').split('\n');
 
@@ -50,17 +50,23 @@ for (const line of extractLines()) {
   }
 }
 
-const printTree = (node: TreeNode, deep: number = 0): void => {
+const sizesOver100K: Array<number> = [];
+const setDirSize = (node: TreeNode, deep: number = 0): number => {
+  node.size = node.nodeType === 'dir' ? 0 : node.size;
   console.log(
     '  '.repeat(deep) + ' - ' + node.name + ' (' + node.nodeType + (node.nodeType === 'dir' ? ')' : `, ${node.size})`),
   );
   for (const child of node.children) {
-    printTree(child, deep + 1);
+    node.size += setDirSize(child, deep + 1);
   }
+  if (node.nodeType === 'dir' && node.size <= 100000) {
+    sizesOver100K.push(node.size);
+  }
+  return node.size;
 };
 
-printTree(rootNode);
+setDirSize(rootNode);
 
-const result = extractLines().length;
+const result = sizesOver100K.reduce((sum, size) => sum + size);
 
 console.log(`result ${result}`);

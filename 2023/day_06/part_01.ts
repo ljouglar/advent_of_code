@@ -1,9 +1,5 @@
 import { readFileSync } from 'fs';
-
-type Race = {
-  duration: number;
-  distance: number;
-};
+import { Race, getFirstAndLastSolution } from './utils';
 
 const filename = '2023/day_06/input.data';
 
@@ -22,17 +18,10 @@ const races: Array<Race> = Array.from(data[0].keys()).map((index: number) => ({
   distance: data[1][index],
 }));
 
-const getDistanceForHoldDuration = (holdDuration: number, duration: number): number =>
-  (duration - holdDuration) * holdDuration;
-
-const getNbSolution = (race: Race): number =>
-  Array.from(Array(race.duration).keys()).reduce((holdDurations: Array<number>, curHoldDuration: number) => {
-    if (getDistanceForHoldDuration(curHoldDuration, race.duration) > race.distance) {
-      return [...holdDurations, curHoldDuration];
-    } else {
-      return holdDurations;
-    }
-  }, []).length;
+const getNbSolution = (race: Race): number => {
+  const [firstSolution, lastSolution] = getFirstAndLastSolution(race);
+  return lastSolution - firstSolution + 1;
+}
 
 const result = races.map(getNbSolution).reduce((product: number, curNbSolution: number) => product * curNbSolution);
 

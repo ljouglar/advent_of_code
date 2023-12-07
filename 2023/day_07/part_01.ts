@@ -1,22 +1,5 @@
 import { readFileSync } from 'fs';
-import { Race, getFirstAndLastSolution } from './utils';
-
-enum HandTypes {
-  FiveOfAKind,
-  FourOfAKind,
-  FullHouse,
-  ThreeOfAKind,
-  TwoPair,
-  OnePair,
-  HighCard,
-}
-
-type Hand = {
-  cards: string;
-  bid: number;
-  type: HandTypes;
-  rank: number;
-};
+import { Hand, HandTypes } from './utils';
 
 const CardValues = 'AKQJT98765432';
 
@@ -66,7 +49,7 @@ const compareHands = (hand1: Hand, hand2: Hand): number => {
 };
 
 let rank: number = 1;
-for (const handType of Object.values(HandTypes).reverse()) {
+for (const handType of Object.values(HandTypes)) {
   hands.filter((hand: Hand) => hand.type === handType).sort(compareHands).forEach((hand) => hand.rank = rank++);
 }
 

@@ -3,7 +3,7 @@ import { Hand, HandTypes } from './utils';
 
 const CardValues = 'AKQT98765432J';
 
-const filename = '2023/day_07/input.ex.data';
+const filename = '2023/day_07/input.data';
 
 const extractLines = (): Array<string> => readFileSync(filename, 'utf-8').split('\n');
 
@@ -14,17 +14,17 @@ const getHandType = (cards: string): HandTypes => {
   if (Object.values(qties).includes(5)) {
     return HandTypes.FiveOfAKind;
   } else if (Object.values(qties).includes(4)) {
-    return HandTypes.FourOfAKind;
+    return qties['J'] ? HandTypes.FiveOfAKind : HandTypes.FourOfAKind;
   } else if (Object.values(qties).includes(3) && Object.values(qties).includes(2)) {
-    return HandTypes.FullHouse;
+    return qties['J'] ? HandTypes.FiveOfAKind : HandTypes.FullHouse;
   } else if (Object.values(qties).includes(3)) {
-    return HandTypes.ThreeOfAKind;
+    return qties['J'] ? (qties['J'] === 2 ? HandTypes.FiveOfAKind : HandTypes.FourOfAKind) : HandTypes.ThreeOfAKind;
   } else if (Object.values(qties).filter((x) => x === 2).length === 2) {
-    return HandTypes.TwoPair;
+    return qties['J'] ? (qties['J'] === 2 ? HandTypes.FourOfAKind : HandTypes.FullHouse) : HandTypes.TwoPair;
   } else if (Object.values(qties).includes(2)) {
-    return HandTypes.OnePair;
+    return qties['J'] ? HandTypes.ThreeOfAKind : HandTypes.OnePair;
   }
-  return HandTypes.HighCard;
+  return qties['J'] ? HandTypes.OnePair : HandTypes.HighCard;
 };
 
 const hands: Array<Hand> = extractLines()
@@ -50,9 +50,12 @@ const compareHands = (hand1: Hand, hand2: Hand): number => {
 
 let rank: number = 1;
 for (const handType of Object.values(HandTypes)) {
-  hands.filter((hand: Hand) => hand.type === handType).sort(compareHands).forEach((hand) => hand.rank = rank++);
+  hands
+    .filter((hand: Hand) => hand.type === handType)
+    .sort(compareHands)
+    .forEach((hand) => (hand.rank = rank++));
 }
 
-const result = hands.reduce((sum: number, curHand: Hand): number => sum + curHand.bid * curHand.rank, 0)
+const result = hands.reduce((sum: number, curHand: Hand): number => sum + curHand.bid * curHand.rank, 0);
 
 console.log(`result ${result}`);

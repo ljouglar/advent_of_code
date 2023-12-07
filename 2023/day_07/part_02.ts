@@ -27,16 +27,15 @@ const getHandType = (cards: string): HandTypes => {
   return qties['J'] ? HandTypes.OnePair : HandTypes.HighCard;
 };
 
-const hands: Array<Hand> = extractLines()
-  .map((line: string): Array<string> => line.split(/ +/))
-  .map(
-    (values: Array<string>): Hand => ({
-      cards: values[0],
-      bid: +values[1],
-      type: getHandType(values[0]),
-      rank: undefined,
-    }),
-  );
+const lineToHand = (line: string): Hand => {
+  const values: Array<string> = line.split(/ +/);
+  return {
+    cards: values[0],
+    bid: +values[1],
+    type: getHandType(values[0]),
+    rank: undefined,
+  };
+};
 
 const compareHands = (hand1: Hand, hand2: Hand): number => {
   for (const i of [0, 1, 2, 3, 4]) {
@@ -47,6 +46,8 @@ const compareHands = (hand1: Hand, hand2: Hand): number => {
   }
   return 0;
 };
+
+const hands: Array<Hand> = extractLines().map(lineToHand);
 
 let rank: number = 1;
 for (const handType of Object.values(HandTypes)) {

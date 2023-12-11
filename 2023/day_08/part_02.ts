@@ -14,13 +14,29 @@ const network = lines.slice(2).reduce((netMap, curLine: string) => {
   return { ...netMap, ...{ [key]: { L, R } } };
 }, {});
 
-let index = 0;
-let result = 0;
+const gcd = (a: number, b: number): number => (b == 0 ? a : gcd(b, a % b));
+const lcm = (a: number, b: number): number => (a / gcd(a, b)) * b;
+const lcmAll = (ns: Array<number>): number => ns.reduce(lcm, 1);
+
+let FormulaIndex = 0;
+let nbStep = 0;
 let nodes = Object.keys(network).filter((key) => key.slice(-1) === 'A');
+const nodeSizes = nodes.map((node) => []);
 while (nodes.some((node) => node.slice(-1) !== 'Z')) {
-  nodes = nodes.map((node) => network[node][formula[index]]);
-  index = (index + 1) % formula.length;
-  result++;
+  if (nodes.some((node) => node.slice(-1) === 'Z')) {
+    const nodeIndex = nodes.findIndex((node) => node.slice(-1) === 'Z');
+    nodeSizes[nodeIndex].push(
+      nbStep - (nodeSizes[nodeIndex].length === 0 ? 0 : nodeSizes[nodeIndex][nodeSizes[nodeIndex].length - 1]),
+    );
+    if (nodeSizes.every((nodeSize) => nodeSize.length > 0)) {
+      break;
+    }
+  }
+  nodes = nodes.map((node) => network[node][formula[FormulaIndex]]);
+  FormulaIndex = (FormulaIndex + 1) % formula.length;
+  nbStep++;
 }
+
+const result = lcmAll(nodeSizes.map((nodeSize) => nodeSize[0]));
 
 console.log(`result ${result}`);

@@ -1,32 +1,54 @@
-// A class that handle labyrinth nodes
-// Coordinate system: (0,0) is top left corner
-// Nodes are stored in a 2D array
-// Each node has his own coordinates and a letter that represents its two connections
-// Specifically:
-//   letter 'L' means that the node has a connection to the right and to the up
-//   letter 'F' means that the node has a connection to the right and to the bottom
-//   letter 'J' means that the node has a connection to the left and to the up
-//   letter '7' means that the node has a connection to the left and to the bottom
-//   letter '|' means that the node has a connection to the bottom and to the up
-//   letter '-' means that the node has a connection to the left and to the right
-class LabNode {
+type LabNode = {
   x: number;
   y: number;
-  letter: string;
+  pipe: string;
+}
 
-  constructor(x: number, y: number, letter: string) {
-    this.x = x;
-    this.y = y;
-    this.letter = letter;
-  }
+type LabGrid = Array<Array<LabNode>>;
+
+type LabyrinthType = {
+  labGrid: LabGrid;
 }
 
 class Labyrinth {
-  nodes: Array<Array<LabNode>>;
+  labGrid: LabGrid;
 
-  constructor() {
-    this.nodes = [];
+  constructor(labGrid: LabGrid) {
+    this.labGrid = labGrid;
   }
 
+  getPipe(x: number, y: number): string {
+    return this.labGrid[y][x].pipe;
+  }
+
+  setPipe(x: number, y: number, pipe: string): void {
+    this.labGrid[y][x].pipe = pipe;
+  }
+
+  getNeighbours(x: number, y: number): Array<LabNode> {
+    const neighbours: Array<LabNode> = [];
+    if (this.labGrid[y - 1] && this.labGrid[y - 1][x]) {
+      neighbours.push(this.labGrid[y - 1][x]);
+    }
+    if (this.labGrid[y + 1] && this.labGrid[y + 1][x]) {
+      neighbours.push(this.labGrid[y + 1][x]);
+    }
+    if (this.labGrid[y][x - 1]) {
+      neighbours.push(this.labGrid[y][x - 1]);
+    }
+    if (this.labGrid[y][x + 1]) {
+      neighbours.push(this.labGrid[y][x + 1]);
+    }
+    return neighbours;
+  }
+
+  getNeighboursByPipe(x: number, y: number, pipe: string): Array<LabNode> {
+    return this.getNeighbours(x, y).filter((node) => node.pipe === pipe);
+  }
+
+  getNeighboursByPipes(x: number, y: number, pipes: Array<string>): Array<LabNode> {
+    return this.getNeighbours(x, y).filter((node) => pipes.includes(node.pipe));
+  }
   
 }
+

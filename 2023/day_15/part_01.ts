@@ -6,15 +6,8 @@ const extractLines = (): Array<string> => readFileSync(filename, 'utf-8').split(
 
 const sequences: Array<string> = extractLines()[0].split(',');
 
-const hashSequence = (sequence: string): number => {
-  let currentValue = 0;
-  for (let i = 0; i < sequence.length; i++) {
-    currentValue = currentValue + sequence.charCodeAt(i);
-    currentValue = currentValue * 17;
-    currentValue = currentValue % 256;
-  }
-  return currentValue;
-};
+const hashSequence = (sequence: string): number =>
+  sequence.split('').reduce((acc, nextValue) => ((acc + nextValue.charCodeAt(0)) * 17) % 256, 0);
 
 const result = sequences.map(hashSequence).reduce((acc, nextValue) => acc + nextValue, 0);
 

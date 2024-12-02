@@ -1,3 +1,5 @@
+// Depuis la racine du projet: npx ts-node 2024/day_01/part_01.ts
+
 import { readFileSync } from 'fs';
 
 const filename = '2024/day_01/input.ex1.data';
